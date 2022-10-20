@@ -6,6 +6,10 @@ This repository contains a tool called Side-Channel Finder for MSP, a static ana
 - For parsing and analyzing ELF files, a Python library, **pyelftools**, is required to install. See https://github.com/eliben/pyelftools for more details.
 - The graph library **NetworkX 1.11**.
 
+```bash
+$ sudo pip3 install graphviz pyelftools
+```
+
 ## Creating input files
 SCF-MSP takes an input file in the JSON format. It contains the path to the binary file, the starting function, a list of starting function’s arguments from high-level code and return values.
 
