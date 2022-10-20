@@ -7,7 +7,7 @@ This repository contains a tool called Side-Channel Finder for MSP, a static ana
 - The graph library **NetworkX 1.11**.
 
 ```bash
-$ sudo pip3 install graphviz pyelftools
+$ pip3 install -r requirements.txt # generated using pip3 freeze > requirements.txt
 ```
 
 ## Creating input files
@@ -48,4 +48,25 @@ The C programs are being compiled once with the off-the-shelf LLVM backend for t
 ## Running the benchmark
 The binary files and the corresponding json files of some vulnerable and beningn C programs is provided in the `testcase` folder. You can run them by executing:
 
-> python main.py testcase/example.json
+```bash
+$ ./main.py testcase/triangle.json
+Saved CFG to 'CFG.gv.pdf'..
+{
+  "result": "NEMESIS_VULNERABILITY",
+  "result_code": 4,
+  "execution_point": {
+    "function": "triangle_enter",
+    "address": "0x826a"
+  },
+  "unique_ret": "True"
+}
+
+$ ./main.py testcase/triangle.nemdef.json
+Saved CFG to 'CFG.gv.pdf'..
+{
+  "result": "INFORMATION_LEAK",
+  "result_code": 1,
+  "execution_point": null,
+  "unique_ret": "True"
+}
+```

@@ -2,6 +2,7 @@
 
 import json
 import sys
+from rich import print_json
 
 from scfmsp.sidechannelverifier.Analysis import Analysis
 from scfmsp.dataextraction.ContainerInitializer import ContainerInitializer
@@ -33,7 +34,8 @@ def main():
         },
         'unique_ret': str(result.unique_ret)
     }
-    print(json.dumps(output))
+    json_res = json.dumps(output)
+    print_json(json_res)
 
     return 0
 

@@ -23,7 +23,7 @@ class Analysis:
         while len(pending_ep) > 0:
             current_ep = pending_ep.pop(0)
             current_instr = self.program.get_instruction_at_execution_point(current_ep)
-            current_predecessors = current_instr.predecessors
+            current_predecessors = list(current_instr.predecessors)
             return_later = False
             current_ac = AssignmentCollection.bottom()
             if len(current_predecessors) == 0:
@@ -89,7 +89,7 @@ class Analysis:
                 current_ep = to_visit.pop(0)
                 visited.add(current_ep)
 
-                pred = self.program.get_instruction_at_execution_point(current_ep).predecessors
+                pred = list(self.program.get_instruction_at_execution_point(current_ep).predecessors)
                 if len(pred) == 0:
                     current_ac = starting_ac
                 else:

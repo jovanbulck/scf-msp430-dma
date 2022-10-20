@@ -27,7 +27,9 @@ class NetworkXConvert:
                     visited.add(succ_ep)
                     to_visit.append(succ_ep)
 
-        g.view()
+        cfg_filename = g.render()
+        print(f"Saved CFG to '{cfg_filename}'..")
+
         self.program.possible_exit_points = [ep for ep in graph if graph.out_degree(ep) == 0]
         if len(self.program.possible_exit_points) > 0 and self.program.exit_point is None:
             self.program.exit_point = self.program.possible_exit_points[-1]
