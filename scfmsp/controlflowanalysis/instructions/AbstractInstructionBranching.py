@@ -1,7 +1,7 @@
 from scfmsp.sidechannelverifier.SecurityLevel import SecurityLevel
 from scfmsp.sidechannelverifier.exceptions.BranchtimeDiffersException import BranchtimeDiffersException
 from scfmsp.sidechannelverifier.exceptions.LoopOnHighConditionException import LoopOnHighConditionException
-from scfmsp.sidechannelverifier.exceptions.NemisisOnHighConditionException import NemisisOnHighConditionException
+from scfmsp.sidechannelverifier.exceptions.NemesisOnHighConditionException import NemesisOnHighConditionException
 
 from scfmsp.controlflowanalysis.RegionComputation import RegionComputation
 from scfmsp.controlflowanalysis.instructions.AbstractInstructionControlFlow import AbstractInstructionControlFlow
@@ -89,7 +89,7 @@ class AbstractInstructionBranching(AbstractInstructionControlFlow):
             raise LoopOnHighConditionException()
         
         if self.have_nemesis():
-            raise NemisisOnHighConditionException()
+            raise NemesisOnHighConditionException()
 
         if not self.is_loop():
             if not (self.get_branchtime_then() == self.get_branchtime_else()):

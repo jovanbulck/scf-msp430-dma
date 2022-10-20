@@ -1,0 +1,2 @@
+class NemesisOnHighConditionException(Exception):
+    pass

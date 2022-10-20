@@ -4,7 +4,7 @@ from scfmsp.sidechannelverifier.AnalysisResult import AnalysisResult
 from scfmsp.sidechannelverifier.AssignmentCollection import AssignmentCollection
 from scfmsp.sidechannelverifier.exceptions.BranchtimeDiffersException import BranchtimeDiffersException
 from scfmsp.sidechannelverifier.exceptions.LoopOnHighConditionException import LoopOnHighConditionException
-from scfmsp.sidechannelverifier.exceptions.NemisisOnHighConditionException import NemisisOnHighConditionException
+from scfmsp.sidechannelverifier.exceptions.NemesisOnHighConditionException import NemesisOnHighConditionException
 
 
 class Analysis:
@@ -49,10 +49,10 @@ class Analysis:
                 if timing_sensitive:
                     assignments[current_ep] = current_ac
                     return Analysis.result(AnalysisResult.LOOP_ON_SECRET_DATA, current_ep, None, assignments, unique_ret)
-            except NemisisOnHighConditionException:
+            except NemesisOnHighConditionException:
                 if timing_sensitive:
                     assignments[current_ep] = current_ac
-                    return Analysis.result(AnalysisResult.NEMISIS_VULNERABILITY, current_ep, None, assignments, unique_ret)
+                    return Analysis.result(AnalysisResult.NEMESIS_VULNERABILITY, current_ep, None, assignments, unique_ret)
                 else:
                     pass
                     
