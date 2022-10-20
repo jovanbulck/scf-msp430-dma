@@ -37,7 +37,7 @@ def main():
     json_res = json.dumps(output)
     print_json(json_res)
 
-    return 0
+    return result.result.value
 
 if __name__ == '__main__':
     sys.exit(main())

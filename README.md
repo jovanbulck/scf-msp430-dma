@@ -49,6 +49,12 @@ The C programs are being compiled once with the off-the-shelf LLVM backend for t
 The binary files and the corresponding json files of some vulnerable and beningn C programs is provided in the `testcase` folder. You can run them by executing:
 
 ```bash
+$ ./run_all.sh
+```
+
+## Example output
+
+```bash
 $ ./main.py testcase/triangle.json
 Saved CFG to 'CFG.gv.pdf'..
 {
