@@ -32,8 +32,7 @@ class AbstractInstruction:
         self.__execution_point = None
 
     def __unicode__(self):
-        return '"%s: %s %s"' % (hex(self.address), self.name, self.arguments)
-
+        return '%s: %s %s' % (hex(self.address), self.name, self.arguments)
 
     def __repr__(self):
         return self.__unicode__()

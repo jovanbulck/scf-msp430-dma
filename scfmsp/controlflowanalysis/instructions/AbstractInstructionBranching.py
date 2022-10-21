@@ -57,15 +57,19 @@ class AbstractInstructionBranching(AbstractInstructionControlFlow):
         for ep_then , ep_else in zip(self.nemesis_region_then, self.nemesis_region_else):
             instr_then = self.program.get_instruction_at_execution_point(ep_then)
             instr_else = self.program.get_instruction_at_execution_point(ep_else)
-            if(instr_then.get_execution_time() != instr_else.get_execution_time()):
-                return True
-        return False
+            latency_then = instr_then.get_execution_time()
+            latency_else = instr_else.get_execution_time()
+            if (latency_then != latency_else):
+                return (True, f'latency {latency_then} for {instr_then}', f'latency {latency_else} for {instr_else}')
+        return (False, None, None)
 
     def have_nemesis(self):
         nemesis = True
-        if(len(self.nemesis_region_then) == len(self.nemesis_region_else)):
-            nemesis = self.compare_region()
-        return nemesis
+        instr_cnt_then = len(self.nemesis_region_then)
+        instr_cnt_else = len(self.nemesis_region_else)
+        if( instr_cnt_then == instr_cnt_else):
+            return self.compare_region()
+        return (nemesis, f'count={instr_cnt_then}', f'count={instr_cnt_else}')
 
     def is_loop(self):
         return self.immediate_dominator in self.get_region_else() or self.immediate_dominator in self.get_region_then()
@@ -88,8 +92,9 @@ class AbstractInstructionBranching(AbstractInstructionControlFlow):
         if self.is_loop():
             raise LoopOnHighConditionException()
         
-        if self.have_nemesis():
-            raise NemesisOnHighConditionException()
+        (have_nemesis, instr_then, instr_else) = self.have_nemesis()
+        if have_nemesis:
+            raise NemesisOnHighConditionException(instr_then, instr_else)
 
         if not self.is_loop():
             if not (self.get_branchtime_then() == self.get_branchtime_else()):

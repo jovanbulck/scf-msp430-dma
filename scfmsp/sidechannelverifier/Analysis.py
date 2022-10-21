@@ -8,7 +8,8 @@ from scfmsp.sidechannelverifier.exceptions.NemesisOnHighConditionException impor
 
 
 class Analysis:
-    result = namedtuple('result', ['result', 'ep', 'finishing_ac', 'assignments', 'unique_ret'])
+    result_fields = ('result', 'ep', 'finishing_ac', 'assignments', 'unique_ret', 'instr_then', 'instr_else')
+    result = namedtuple('result', result_fields, defaults=(None,) * len(result_fields))
 
     def __init__(self, program):
         self.program = program
@@ -49,10 +50,10 @@ class Analysis:
                 if timing_sensitive:
                     assignments[current_ep] = current_ac
                     return Analysis.result(AnalysisResult.LOOP_ON_SECRET_DATA, current_ep, None, assignments, unique_ret)
-            except NemesisOnHighConditionException:
+            except NemesisOnHighConditionException as ne:
                 if timing_sensitive:
                     assignments[current_ep] = current_ac
-                    return Analysis.result(AnalysisResult.NEMESIS_VULNERABILITY, current_ep, None, assignments, unique_ret)
+                    return Analysis.result(AnalysisResult.NEMESIS_VULNERABILITY, current_ep, None, assignments, unique_ret, ne.instr_then, ne.instr_else)
                 else:
                     pass
                     

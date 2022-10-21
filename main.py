@@ -30,7 +30,9 @@ def main():
         'result_code': result.result.value,
         'execution_point': None if result.ep is None else {
             'function': result.ep.function,
-            'address': hex(result.ep.address)
+            'address': hex(result.ep.address),
+            'then_branch': str(result.instr_then),
+            'else_branch': str(result.instr_else),
         },
         'unique_ret': str(result.unique_ret)
     }
