@@ -3,14 +3,7 @@ from scfmsp.controlflowanalysis.MSP430 import MSP430AS, MSP430AD
 from scfmsp.controlflowanalysis.MSP430_DMA import dma_traces
 import logging
 
-# Comment out to get finer-grained debug logs
-LOG_LEVEL = logging.DEBUG
-LOG_LEVEL = logging.WARNING
-LOG_LEVEL = logging.ERROR
-
-logging.basicConfig(format='%(levelname)s: %(message)s', level=logging.WARNING)
-logger = logging.getLogger()
-logger.setLevel(LOG_LEVEL)
+logger = logging.getLogger(__file__)
 
 class AbstractInstruction:
     name = ''
@@ -414,7 +407,7 @@ class AbstractInstruction:
         except KeyError:
             logger.error(f'Unknown MSP430TableGen instruction: {self.short} {loc}')
 
-        logger.debug(f'{self.short:12} {instr_str:5} ' \
+        logger.info(f'{self.short:12} {instr_str:5} ' \
                    f'with latency={self.latency}; trace={str(self.trace):26} ' \
                    f'{str(self.arguments):20} {loc}')
 
@@ -425,6 +418,10 @@ class AbstractInstruction:
             if (self.latency*3 + 2) != len(self.trace) :
                 logger.warning(f'Incorrect instruction latency for {self.short}: ' \
                                f'{self.latency} vs. DMA trace {self.trace} {loc}')
+
+    def get_dma_trace(self):
+        logger.info(f'querying {self.short:12} @{self.address:#x} with trace {self.trace}')
+        return self.trace
 
     def get_execution_point(self):
         if self.__execution_point is None:

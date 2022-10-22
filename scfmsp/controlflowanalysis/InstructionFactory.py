@@ -97,5 +97,10 @@ class InstructionFactory:
         instr_copy.dst_register_mode = instr.dst_register_mode
         instr_copy.dst_indexed_mode = instr.dst_indexed_mode
         instr_copy.file = instr.file
+
+        instr_copy.as_mode = instr.as_mode
+        instr_copy.ad_mode = instr.ad_mode
+        instr_copy.short = instr.short
+        instr_copy.trace = instr.trace
         
         return instr_copy

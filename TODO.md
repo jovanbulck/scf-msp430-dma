@@ -75,7 +75,7 @@ AssertionError
 ### Missing traces
 
 For some reason these instructions seem not to be in the tablegen_raw file, but
-they are used so we need to have a DMA trace for them:
+they are used so we need to have a DMA trace for them: see `errors.txt`.
 
 General:
 

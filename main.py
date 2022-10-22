@@ -8,6 +8,15 @@ from scfmsp.sidechannelverifier.Analysis import Analysis
 from scfmsp.dataextraction.ContainerInitializer import ContainerInitializer
 from scfmsp.dataextraction.SyntaxConverter import SyntaxConverter
 
+import logging
+
+# Comment out to get finer-grained debug logs
+LOG_LEVEL = logging.INFO
+#LOG_LEVEL = logging.WARNING
+#LOG_LEVEL = logging.ERROR
+
+logging.basicConfig(format='%(levelname)s: %(message)s', level=LOG_LEVEL)
+
 def main():
     args = sys.argv
     if args is None or len(args) < 2:

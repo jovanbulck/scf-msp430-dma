@@ -2,10 +2,13 @@ from scfmsp.sidechannelverifier.SecurityLevel import SecurityLevel
 from scfmsp.sidechannelverifier.exceptions.BranchtimeDiffersException import BranchtimeDiffersException
 from scfmsp.sidechannelverifier.exceptions.LoopOnHighConditionException import LoopOnHighConditionException
 from scfmsp.sidechannelverifier.exceptions.NemesisOnHighConditionException import NemesisOnHighConditionException
+from scfmsp.sidechannelverifier.exceptions.DMAOnHighConditionException import DMAOnHighConditionException
 
 from scfmsp.controlflowanalysis.RegionComputation import RegionComputation
 from scfmsp.controlflowanalysis.instructions.AbstractInstructionControlFlow import AbstractInstructionControlFlow
 
+import logging
+logger = logging.getLogger(__file__)
 
 class AbstractInstructionBranching(AbstractInstructionControlFlow):
     def __init__(self, function):
@@ -64,12 +67,32 @@ class AbstractInstructionBranching(AbstractInstructionControlFlow):
         return (False, None, None)
 
     def have_nemesis(self):
+        logger.info('Checking Nemesis')
         nemesis = True
         instr_cnt_then = len(self.nemesis_region_then)
         instr_cnt_else = len(self.nemesis_region_else)
         if( instr_cnt_then == instr_cnt_else):
             return self.compare_region()
         return (nemesis, f'count={instr_cnt_then}', f'count={instr_cnt_else}')
+
+    def compare_region_dma(self):
+        for ep_then , ep_else in zip(self.nemesis_region_then, self.nemesis_region_else):
+            instr_then = self.program.get_instruction_at_execution_point(ep_then)
+            instr_else = self.program.get_instruction_at_execution_point(ep_else)
+            trace_then = instr_then.get_dma_trace()
+            trace_else = instr_else.get_dma_trace()
+            if (trace_then != trace_else):
+                return (True, f'DMA trace {trace_then} for {instr_then}', f'DMA trace {trace_else} for {instr_else}')
+        return (False, None, None)
+
+    def have_dma(self):
+        logger.info('Checking DMA')
+        dma = True
+        instr_cnt_then = len(self.nemesis_region_then)
+        instr_cnt_else = len(self.nemesis_region_else)
+        if( instr_cnt_then == instr_cnt_else):
+            return self.compare_region_dma()
+        return (dma, f'count={instr_cnt_then}', f'count={instr_cnt_else}')
 
     def is_loop(self):
         return self.immediate_dominator in self.get_region_else() or self.immediate_dominator in self.get_region_then()
@@ -95,6 +118,10 @@ class AbstractInstructionBranching(AbstractInstructionControlFlow):
         (have_nemesis, instr_then, instr_else) = self.have_nemesis()
         if have_nemesis:
             raise NemesisOnHighConditionException(instr_then, instr_else)
+
+        (have_dma, instr_then, instr_else) = self.have_dma()
+        if have_dma:
+            raise DMAOnHighConditionException(instr_then, instr_else)
 
         if not self.is_loop():
             if not (self.get_branchtime_then() == self.get_branchtime_else()):

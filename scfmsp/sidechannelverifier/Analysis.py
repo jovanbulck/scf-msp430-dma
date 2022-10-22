@@ -5,7 +5,7 @@ from scfmsp.sidechannelverifier.AssignmentCollection import AssignmentCollection
 from scfmsp.sidechannelverifier.exceptions.BranchtimeDiffersException import BranchtimeDiffersException
 from scfmsp.sidechannelverifier.exceptions.LoopOnHighConditionException import LoopOnHighConditionException
 from scfmsp.sidechannelverifier.exceptions.NemesisOnHighConditionException import NemesisOnHighConditionException
-
+from scfmsp.sidechannelverifier.exceptions.DMAOnHighConditionException import DMAOnHighConditionException
 
 class Analysis:
     result_fields = ('result', 'ep', 'finishing_ac', 'assignments', 'unique_ret', 'instr_then', 'instr_else')
@@ -56,7 +56,13 @@ class Analysis:
                     return Analysis.result(AnalysisResult.NEMESIS_VULNERABILITY, current_ep, None, assignments, unique_ret, ne.instr_then, ne.instr_else)
                 else:
                     pass
-                    
+            except DMAOnHighConditionException as dma:
+                if timing_sensitive:
+                    assignments[current_ep] = current_ac
+                    return Analysis.result(AnalysisResult.DMA_VULNERABILITY, current_ep, None, assignments, unique_ret, dma.instr_then, dma.instr_else)
+                else:
+                    pass
+                     
             if current_ac.is_modified() or (assignments.get(current_ep, None) is None):
                 pending_ep.extend(current_instr.get_successors_checked())
             if return_later:
