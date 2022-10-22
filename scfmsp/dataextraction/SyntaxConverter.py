@@ -38,11 +38,11 @@ class SyntaxConverter:
         while(i < len(opcode)):
             op_list =  opcode.split()
             abs_instr = AbstractInstruction(current_func)
-            instr_string, length, arguments, clock, register, index, immediate, indirect, dst_register, dst_index = abs_instr.parse(op_list[0][i:])
+            instr_string, length, arguments, clock, register, index, immediate, indirect, dst_register, dst_index, as_mode, ad_mode = abs_instr.parse(op_list[0][i:])
             if(instr_string == ""): # --------- this will be changed later (sancus instruction)
                 return ret
             instr = InstructionFactory.get_instruction(instr_string, function=current_func)
-            instr.get_info(length, address, arguments, clock, op_list[0][i:], register, index, immediate, indirect, dst_register, dst_index, file)
+            instr.set_info(instr_string, length, address, arguments, clock, op_list[0][i:], register, index, immediate, indirect, dst_register, dst_index, file, as_mode, ad_mode)
             current_func.add_instruction(instr)
 
             if(instr_string == 'call' and op_list[0][i+1] == '0'):

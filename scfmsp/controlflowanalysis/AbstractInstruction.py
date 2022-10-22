@@ -1,5 +1,6 @@
 from scfmsp.controlflowanalysis.ExecutionPoint import ExecutionPoint
-
+from scfmsp.controlflowanalysis.MSP430 import MSP430AS, MSP430AD
+from scfmsp.controlflowanalysis.MSP430_DMA import dma_traces
 
 class AbstractInstruction:
     name = ''
@@ -31,12 +32,97 @@ class AbstractInstruction:
         self.__successors_checked_cache = None
         self.__execution_point = None
 
+        # NOTE: we redefine our own variables here to not further clubber the
+        # parsing below and to ensure that src/dst are assigned only a single
+        # addressing mode at a time
+        self.as_mode = ''
+        self.ad_mode = ''
+
     def __unicode__(self):
         return '%s: %s %s' % (hex(self.address), self.name, self.arguments)
 
     def __repr__(self):
         return self.__unicode__()
 
+    def determine_addressing_modes(self, arg1, arg2=None):
+        if (arg1 == 3) or (arg1 == 2 and (self.indirect_mode or self.immediate_mode)):
+            self.as_mode = MSP430AS.CONSTANT
+        elif self.indexed_mode and arg1 == 2:
+            self.as_mode = MSP430AS.ABSOLUTE
+        elif self.immediate_mode and arg1 == 0:
+            self.as_mode = MSP430AS.IMMEDIATE
+        elif self.indexed_mode and arg1 == 0:
+            self.as_mode = MSP430AS.SYMBOLIC
+        elif self.immediate_mode:
+            self.as_mode = MSP430AS.INDIRECT_INC
+        elif self.indirect_mode:
+            self.as_mode = MSP430AS.INDIRECT
+        elif self.indexed_mode:
+            self.as_mode = MSP430AS.INDEXED
+        elif self.register_mode:
+            self.as_mode = MSP430AS.DIRECT
+
+        if arg2 is not None:
+            if self.dst_indexed_mode and arg2 == 2:
+                self.ad_mode = MSP430AD.ABSOLUTE
+            elif self.dst_indexed_mode and arg2 == 0:
+                self.ad_mode = MSP430AD.SYMBOLIC
+            elif self.dst_indexed_mode:
+                self.ad_mode = MSP430AD.INDEXED
+            elif self.dst_register_mode:
+                self.ad_mode = MSP430AD.DIRECT
+
+    '''
+        Parses the given asm instruction into its corresponding LLVM tablegen short format.
+    '''
+    def mk_short(self, inst):
+        ops = inst.split('.')
+        op = ops[0].upper()
+        oplen = '8' if (len(ops) > 1) else '16'
+        postfix = f'{self.ad_mode}{self.as_mode}'
+
+        if 'J' in op:
+            op = 'JMP' if op == 'JMP' else 'JCC'
+            oplen = ''
+            postfix = ''
+
+        elif self.ad_mode == MSP430AD.DIRECT and self.arguments[1] == 'r0':
+            if self.as_mode == MSP430AS.INDIRECT_INC and self.arguments[0] == 'r1':
+                op =  'RET'
+                oplen = ''
+                postfix = ''
+            else:
+                op = 'BRCALL'
+                oplen = ''
+                postfix = f'{self.as_mode}'
+
+        elif self.as_mode == MSP430AS.INDIRECT_INC and self.arguments[0] == 'r1':
+                op = 'POP'
+                postfix = f'{self.ad_mode}'
+
+        elif inst == 'MOV.B':
+            if self.as_mode == MSP430AS.DIRECT and self.ad_mode == MSP430AD.DIRECT:
+                op = 'ZEXT'
+                oplen = '16'
+                postfix = 'r'
+            else:
+                op = 'MOVZX'
+                oplen = '16'
+                postfix += '8'
+
+        elif op == 'SXT':
+            op = 'SEXT'
+
+        elif op == 'CALL':
+            oplen = ''
+
+        elif op == 'RETI':
+            oplen = ''
+            postfix = ''
+
+        self.short =  op + oplen + postfix
+
+    # https://en.wikipedia.org/wiki/TI_MSP430#MSP430_CPU
     def parse(self, op_list):
         instr = ''
         self.oplist = op_list.split()
@@ -61,6 +147,8 @@ class AbstractInstruction:
         # Instruction II (1 operand)-----------------------
         if (self.oplist[0][2] == '1'):
             arg1 = int(self.oplist[0][1],16)
+            self.determine_addressing_modes(arg1)
+
             # Length of instructions and arguments ---------------
             if(self.register_mode):
                 length = 1
@@ -131,6 +219,8 @@ class AbstractInstruction:
         else:
             arg1 = int(self.oplist[0][3],16)
             arg2 = int(self.oplist[0][1],16)
+            self.determine_addressing_modes(arg1, arg2)
+
             # Length of instruction & arguments
             if(self.register_mode and self.dst_register_mode):
                 length = 1
@@ -274,9 +364,10 @@ class AbstractInstruction:
                 else:
                     instr =  'and'
 
-        return instr, length, self.arguments, self.clock, self.register_mode, self.indexed_mode, self.immediate_mode, self.indirect_mode, self.dst_register_mode, self.dst_indexed_mode
+
+        return instr, length, self.arguments, self.clock, self.register_mode, self.indexed_mode, self.immediate_mode, self.indirect_mode, self.dst_register_mode, self.dst_indexed_mode, self.as_mode, self.ad_mode
     
-    def get_info(self, length, address, arguments, clock, oplist, register, index, immediate, indirect, dst_register, dst_index, file):
+    def set_info(self, instr_str, length, address, arguments, clock, oplist, register, index, immediate, indirect, dst_register, dst_index, file, as_mode, ad_mode):
         self.length = length
         self.address = address
         self.arguments = arguments
@@ -289,6 +380,27 @@ class AbstractInstruction:
         self.dst_indexed_mode = dst_index
         self.dst_register_mode = dst_register
         self.file =  file
+
+        self.latency = self.get_execution_time()
+        self.as_mode = as_mode
+        self.ad_mode = ad_mode
+        self.trace = None
+        self.mk_short(instr_str)
+
+        try:
+            self.trace = dma_traces[self.short]
+        except KeyError:
+            print(f'KeyError: Unknown MSP430TableGen instruction: {self.short}')
+
+        print(f'{self.short:12} {instr_str:5} ' \
+              f'with latency={self.latency}; trace={str(self.trace):26} ' \
+              f'{str(self.arguments):20} (@{self.address:#x} in {self.file})')
+
+        assert('UNKNOWN' not in self.short)
+        #assert(self.trace)
+        if (self.trace is not None):
+            if (self.latency*3 + 2) != len(self.trace) :
+                print(f'WARNING: Incorrect instruction latency {self.latency} vs. DMA trace length')
 
     def get_execution_point(self):
         if self.__execution_point is None:
