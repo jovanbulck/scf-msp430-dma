@@ -52,7 +52,7 @@ class MSP430AS(Enum):
     INDEXED      = 'n'
     INDIRECT     = 'p'          #TODO not in parse_tablegen script?
     INDIRECT_INC = 'p'    
-    SYMBOLIC     = 'UNKNOWN'    #TODO not in parse_tablegen script?
+    SYMBOLIC     = 'SYMBOLIC'   #TODO not in parse_tablegen script?
     IMMEDIATE    = 'i'
     ABSOLUTE     = 'm'
     CONSTANT     = 'c'
@@ -63,7 +63,7 @@ class MSP430AS(Enum):
 class MSP430AD(Enum):
     DIRECT       = 'r'
     INDEXED      = 'n'
-    SYMBOLIC     = 'UNKNOWN'
+    SYMBOLIC     = 'SYMBOLIC'
     ABSOLUTE     = 'm'
 
     def __str__(self):

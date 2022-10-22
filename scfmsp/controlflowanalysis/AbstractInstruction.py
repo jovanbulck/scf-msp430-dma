@@ -1,6 +1,16 @@
 from scfmsp.controlflowanalysis.ExecutionPoint import ExecutionPoint
 from scfmsp.controlflowanalysis.MSP430 import MSP430AS, MSP430AD
 from scfmsp.controlflowanalysis.MSP430_DMA import dma_traces
+import logging
+
+# Comment out to get finer-grained debug logs
+LOG_LEVEL = logging.DEBUG
+LOG_LEVEL = logging.WARNING
+LOG_LEVEL = logging.ERROR
+
+logging.basicConfig(format='%(levelname)s: %(message)s', level=logging.WARNING)
+logger = logging.getLogger()
+logger.setLevel(LOG_LEVEL)
 
 class AbstractInstruction:
     name = ''
@@ -397,20 +407,24 @@ class AbstractInstruction:
         self.trace = None
         self.mk_short(instr_str)
 
+        loc = f'(@{self.address:#x} in {self.file})'
+
         try:
             self.trace = dma_traces[self.short]
         except KeyError:
-            print(f'KeyError: Unknown MSP430TableGen instruction: {self.short}')
+            logger.error(f'Unknown MSP430TableGen instruction: {self.short} {loc}')
 
-        print(f'{self.short:12} {instr_str:5} ' \
-              f'with latency={self.latency}; trace={str(self.trace):26} ' \
-              f'{str(self.arguments):20} (@{self.address:#x} in {self.file})')
+        logger.debug(f'{self.short:12} {instr_str:5} ' \
+                   f'with latency={self.latency}; trace={str(self.trace):26} ' \
+                   f'{str(self.arguments):20} {loc}')
 
-        assert('UNKNOWN' not in self.short)
-        #assert(self.trace)
+        if 'SYMBOLIC' in self.short:
+            logger.error(f'Symbolic addressing mode for {self.short} {loc}')
+
         if (self.trace is not None):
             if (self.latency*3 + 2) != len(self.trace) :
-                print(f'WARNING: Incorrect instruction latency {self.latency} vs. DMA trace length')
+                logger.warning(f'Incorrect instruction latency for {self.short}: ' \
+                               f'{self.latency} vs. DMA trace {self.trace} {loc}')
 
     def get_execution_point(self):
         if self.__execution_point is None:
