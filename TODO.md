@@ -80,12 +80,7 @@ they are used so we need to have a DMA trace for them:
 General:
 
 * Missing addressing modes for "symbolic" and "indirect" (w/o autoincrement)? AFAIS they're also not in the [TableGen spec](https://github.com/llvm-mirror/llvm/blob/master/lib/Target/MSP430/MSP430InstrFormats.td#L17)
-* The existing MSP430-SCF does not seem to correctly handle the special case of R0 as a destination register and does not count the penalty cycle for writing to R0 in the instruction latency it seems:
-
-```
-BRCALLi      mov   with latency=2; trace=100|000|000                ('#7e18', 'r0')      (@0x7e28 in testcase/multiply)
-WARNING: Incorrect instruction latency 2 vs. DMA trace length
-```
+* We have `rn` but not `nr` so the generation script misses this? eg `mov     r12,    4(r10)`
 
 Missing instructions reported below:
 

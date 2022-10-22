@@ -225,6 +225,8 @@ class AbstractInstruction:
             if(self.register_mode and self.dst_register_mode):
                 length = 1
                 self.clock = 1
+                if (arg2 == 0):
+                    self.clock = 2
                 self.arguments = ('r'+str(arg1),'r'+str(arg2),)
 
             if(self.register_mode and self.dst_indexed_mode):
@@ -241,6 +243,7 @@ class AbstractInstruction:
                     length = 1
                     self.clock = 1
                 else:
+                    # Note: Documented openMSP430 ISA deviation: always 3 cycles even for R0
                     self.clock = 3
                 if(arg1 == 2):
                     self.arguments = ('&'+self.oplist[0][6]+self.oplist[0][7]+self.oplist[0][4]+self.oplist[0][5],'r'+str(arg2),)
@@ -263,6 +266,9 @@ class AbstractInstruction:
                     self.clock = 1
                 else:
                     self.clock = 2
+                    # Note: Documented openMSP430 ISA deviation: 2->3 for R0
+                    if (arg2 == 0):
+                        self.clock = 3
                 self.arguments = ('r'+str(arg1),'r'+str(arg2),)
 
             if(self.indirect_mode and self.dst_indexed_mode):
@@ -280,6 +286,8 @@ class AbstractInstruction:
                 if (self.oplist[0][3] == '0'): #-----##------
                     length = 2
                     self.clock = 2
+                    if (arg2 == 0):
+                        self.clock = 3
                     self.arguments = ('#'+self.oplist[0][6]+self.oplist[0][7]+self.oplist[0][4]+self.oplist[0][5],'r'+str(arg2),)
                 else:# indirect autoincrement -------------------
                     length = 1
@@ -287,6 +295,8 @@ class AbstractInstruction:
                         self.clock = 1
                     else:
                         self.clock = 2
+                        if (arg2 == 0):
+                            self.clock = 3
                     self.arguments = ('r'+str(arg1),'r'+str(arg2),)
 
             if(self.immediate_mode and self.dst_indexed_mode):

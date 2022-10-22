@@ -9,13 +9,16 @@ class InstructionCall(AbstractInstruction):
     def get_execution_time(self):
         oplist = self.oplist.split()
         if(self.register_mode):
-            return 4
+            # Note: Documented openMSP430 ISA deviation: 4 -> 3
+            return 3
 
         if(self.indexed_mode):
             if(oplist[0][1] == '3'): # constant generator -----------------
-                return 4
+                # Note: Documented openMSP430 ISA deviation: 4 -> 3
+                return 3
             else:
-                return 5
+                # Note: Documented openMSP430 ISA deviation: 5 -> 4
+                return 4
 
         if(self.indirect_mode):
             return 4

@@ -14,7 +14,8 @@ class InstructionPush(AbstractInstruction):
             if(oplist[0][1] == '3'): # constant generator -----------------
                 return 3
             else:
-                return 5
+                # Note: Documented openMSP430 ISA deviation: 5 -> 4
+                return 4
 
         if(self.indirect_mode):
             if(oplist[0][1] == '2' or oplist[0][1] == '3'):
