@@ -49,12 +49,12 @@ As 	Ad 	Register 	Syntax 	Description
 '''
 class MSP430AS(Enum):
     DIRECT       = 'r'
-    INDEXED      = 'n'
-    INDIRECT     = 'p'          #TODO not in parse_tablegen script?
+    INDEXED      = 'm'
+    INDIRECT     = 'n'
     INDIRECT_INC = 'p'    
-    SYMBOLIC     = 'SYMBOLIC'   #TODO not in parse_tablegen script?
+    SYMBOLIC     = INDEXED
     IMMEDIATE    = 'i'
-    ABSOLUTE     = 'm'
+    ABSOLUTE     = INDEXED
     CONSTANT     = 'c'
 
     def __str__(self):
@@ -62,9 +62,9 @@ class MSP430AS(Enum):
  
 class MSP430AD(Enum):
     DIRECT       = 'r'
-    INDEXED      = 'n'
-    SYMBOLIC     = 'SYMBOLIC'
-    ABSOLUTE     = 'm'
+    INDEXED      = 'm'
+    SYMBOLIC     = INDEXED
+    ABSOLUTE     = INDEXED
 
     def __str__(self):
         return self.value
