@@ -8,23 +8,21 @@ from scfmsp.sidechannelverifier.Analysis import Analysis
 from scfmsp.dataextraction.ContainerInitializer import ContainerInitializer
 from scfmsp.dataextraction.SyntaxConverter import SyntaxConverter
 
+import argparse
 import logging
 
-# Comment out to get finer-grained debug logs
-LOG_LEVEL = logging.INFO
-#LOG_LEVEL = logging.WARNING
-#LOG_LEVEL = logging.ERROR
-
-logging.basicConfig(format='%(levelname)s: %(message)s', level=LOG_LEVEL)
-
 def main():
-    args = sys.argv
-    if args is None or len(args) < 2:
-        print('Run using a path to a json file')
-        return 0
+    parser = argparse.ArgumentParser(description='Process some integers.')
+    parser.add_argument('json_file')
+    parser.add_argument('--debug', dest='log_level', action='store_const', const=logging.INFO, default=logging.ERROR)
+    parser.add_argument('--warning', dest='log_level', action='store_const', const=logging.WARNING)
+    parser.add_argument('--error', dest='log_level', action='store_const', const=logging.ERROR)
+    args = parser.parse_args()
+
+    logging.basicConfig(format='%(levelname)s: %(message)s', level=args.log_level)
 
     initializer = ContainerInitializer()
-    initializer.parse_file(args[1])
+    initializer.parse_file(args.json_file)
     program = SyntaxConverter.parse_file(initializer.get_file_path(), initializer.get_starting_function())
 
     analysis = Analysis(program)
