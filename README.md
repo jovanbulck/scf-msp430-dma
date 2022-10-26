@@ -48,8 +48,30 @@ The C programs are being compiled once with the off-the-shelf LLVM backend for t
 ## Running the benchmark
 The binary files and the corresponding json files of some vulnerable and beningn C programs is provided in the `testcase` folder. You can run them by executing:
 
+To run one program:
+
+```bash
+$ ./main.py testcase/diamond.nemdef.json --debug # or pass --info or --warning or --error
+```
+
+To run all (hardened + unhardened) programs:
+
 ```bash
 $ ./run_all.sh
+```
+
+To run the Nemesis-hardened code:
+
+```bash
+$ ./untar.sh bin/sancus-nemdef.tgz
+$ ./run_all_nemdef.sh 
+```
+
+To run the Nemesis+DMA-hardened code:
+
+```bash
+$ ./untar.sh bin/sancus-dma.tgz
+$ ./run_all_nemdef.sh 
 ```
 
 ## Example output
