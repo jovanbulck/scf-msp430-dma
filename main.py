@@ -14,7 +14,8 @@ import logging
 def main():
     parser = argparse.ArgumentParser(description='Process some integers.')
     parser.add_argument('json_file')
-    parser.add_argument('--debug', dest='log_level', action='store_const', const=logging.INFO, default=logging.ERROR)
+    parser.add_argument('--debug', dest='log_level', action='store_const', const=logging.DEBUG, default=logging.WARNING)
+    parser.add_argument('--info', dest='log_level', action='store_const', const=logging.INFO)
     parser.add_argument('--warning', dest='log_level', action='store_const', const=logging.WARNING)
     parser.add_argument('--error', dest='log_level', action='store_const', const=logging.ERROR)
     args = parser.parse_args()

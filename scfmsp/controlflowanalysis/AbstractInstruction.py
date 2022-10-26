@@ -407,7 +407,7 @@ class AbstractInstruction:
         except KeyError:
             logger.error(f'Unknown MSP430TableGen instruction: {self.short} {loc}')
 
-        logger.info(f'{self.short:12} {instr_str:5} ' \
+        logger.debug(f'{self.short:12} {instr_str:5} ' \
                    f'with latency={self.latency}; trace={str(self.trace):26} ' \
                    f'{str(self.arguments):20} {loc}')
 

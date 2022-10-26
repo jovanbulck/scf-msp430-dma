@@ -27,7 +27,8 @@ class InstructionCall(AbstractInstruction):
             if(oplist[0][1] == '2' or oplist[0][1] == '3'):
                 return 4
             else:
-                return 5
+                # Note: _Undocumented_(!) openMSP430 ISA deviation: 5 -> 4
+                return 4
 
     def execute_judgment(self, ac):
         pass
