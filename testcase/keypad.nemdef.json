@@ -1,0 +1,16 @@
+{
+	"file": "testcase/keypad.nemdef",
+	"starting_function": "keypad_poll",
+	"timing_sensitive": true,
+	"parameters": [{
+			"size": 1,
+			"confidential": true
+		}
+	],
+	"memory": false,
+	"result": {
+		"size": 1,
+		"confidential": true,
+        "memory": false
+	}
+}

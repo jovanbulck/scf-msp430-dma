@@ -1,0 +1,16 @@
+{
+	"file": "testcase/switch16.nemdef",
+	"starting_function": "switch16_case",
+	"timing_sensitive": true,
+	"parameters": [{
+			"size": 1,
+			"confidential": true
+		}
+	],
+	"memory": false,
+	"result": {
+		"size": 1,
+		"confidential": true,
+        "memory": false
+	}
+}

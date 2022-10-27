@@ -1,0 +1,25 @@
+{
+	"file": "testcase/kruskal.nemdef",
+	"starting_function": "kruskal_enter",
+	"timing_sensitive": true,
+	"parameters": [{
+        "size": 1,
+        "confidential": true
+    },{
+        "size": 1,
+        "confidential": false
+    },{
+        "size": 1,
+        "confidential": false
+    },{
+        "size": 1,
+        "confidential": false
+    }
+	],
+	"memory": false,
+	"result": {
+		"size": 1,
+		"confidential": true,
+        "memory": false
+	}
+}
