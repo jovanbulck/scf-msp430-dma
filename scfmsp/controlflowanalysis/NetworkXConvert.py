@@ -10,12 +10,12 @@ class NetworkXConvert:
         visited = set()
         to_visit = [starting_ep]
         graph = nx.DiGraph()
-        g = Digraph('G', filename='CFG.gv')  
+        g = Digraph('G', filename='CFG.gv')
         count = 0
         while len(to_visit) > 0:
             count += 1
-            
-            current_ep = to_visit.pop(0) 
+
+            current_ep = to_visit.pop(0)
             current_instr = self.program.get_instruction_at_execution_point(current_ep)
             for succ_ep in current_instr.get_successors_checked():
                 graph.add_edge(current_ep, succ_ep)
@@ -28,7 +28,7 @@ class NetworkXConvert:
                     to_visit.append(succ_ep)
 
         cfg_filename = g.render()
-        print(f"Saved CFG to '{cfg_filename}'..")
+        # print(f"Saved CFG to '{cfg_filename}'..")
 
         self.program.possible_exit_points = [ep for ep in graph if graph.out_degree(ep) == 0]
         if len(self.program.possible_exit_points) > 0 and self.program.exit_point is None:

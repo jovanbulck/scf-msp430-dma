@@ -18,6 +18,7 @@ def main():
     parser.add_argument('--info', dest='log_level', action='store_const', const=logging.INFO)
     parser.add_argument('--warning', dest='log_level', action='store_const', const=logging.WARNING)
     parser.add_argument('--error', dest='log_level', action='store_const', const=logging.ERROR)
+    parser.add_argument('--verbose', action='store_true')
     args = parser.parse_args()
 
     logging.basicConfig(format='%(levelname)s: %(message)s', level=args.log_level)
@@ -45,7 +46,10 @@ def main():
         'unique_ret': str(result.unique_ret)
     }
     json_res = json.dumps(output)
-    print_json(json_res)
+    if args.verbose:
+        print_json(json_res)
+    else:
+        print(result.result.name)
 
     return result.result.value
 

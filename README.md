@@ -1,4 +1,7 @@
 # SCF-MSP430
+
+Run with `--verbose` to get detailed description about the leak.
+
 This repository contains a tool called Side-Channel Finder for MSP, a static analysis tool to automatically verify  binary files compiled for MSP430 microcontroller to detecting information leakage through novel interrupt-latency attacks (a.k.a. Nemesis), timing side-channels, and undesired information flow.
 
 ## Pre-requisites
@@ -25,7 +28,7 @@ in a binary file "A". The corresponding json file could be like:
 	   "timing_sensitive": true,<br/>
 	   "parameters": [{<br  />
 		"size": 1,<br/>
-		"confidential": true 
+		"confidential": true
 	    }, {
 		"size": 1,
 		"confidential": false
@@ -64,14 +67,14 @@ To run the Nemesis-hardened code:
 
 ```bash
 $ ./untar.sh bin/sancus-nemdef.tgz
-$ ./run_all_nemdef.sh 
+$ ./run_all_nemdef.sh
 ```
 
 To run the Nemesis+DMA-hardened code:
 
 ```bash
 $ ./untar.sh bin/sancus-dma.tgz
-$ ./run_all_nemdef.sh 
+$ ./run_all_nemdef.sh
 ```
 
 ## Example output
