@@ -18,8 +18,11 @@ def main():
     parser.add_argument('--info', dest='log_level', action='store_const', const=logging.INFO)
     parser.add_argument('--warning', dest='log_level', action='store_const', const=logging.WARNING)
     parser.add_argument('--error', dest='log_level', action='store_const', const=logging.ERROR)
-    parser.add_argument('--verbose', action='store_true')
+    parser.add_argument('--minimal', action='store_true')
     args = parser.parse_args()
+
+    if args.minimal:
+        args.log_level = logging.ERROR
 
     logging.basicConfig(format='%(levelname)s: %(message)s', level=args.log_level)
 
@@ -32,7 +35,13 @@ def main():
     starting_ac = initializer.get_starting_ac()
     finishing_ac = initializer.get_finishing_ac()
     timing_sensitive = initializer.get_timing_sensitive()
-    result = analysis.analyze(starting_ep, starting_ac, finishing_ac, timing_sensitive)
+    print(args.json_file.rjust(40), end='\t')
+
+    try:
+        result = analysis.analyze(starting_ep, starting_ac, finishing_ac, timing_sensitive)
+    except:
+        print("Recursion exception!")
+        exit()
 
     output = {
         'result': result.result.name,
@@ -46,10 +55,10 @@ def main():
         'unique_ret': str(result.unique_ret)
     }
     json_res = json.dumps(output)
-    if args.verbose:
-        print_json(json_res)
+    if args.minimal:
+        print(result.result)
     else:
-        print(result.result.name)
+        print_json(json_res)
 
     return result.result.value
 

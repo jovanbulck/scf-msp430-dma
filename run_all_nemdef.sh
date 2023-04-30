@@ -3,7 +3,6 @@
 JSON=$(ls testcase/*.nemdef.json)
 
 for j in $JSON; do
-    printf "$j: "
     ./main.py $j $@
     RV=$?
 
