@@ -1,10 +1,10 @@
 {
-	"file": "sancus/mulhi3/mulhi3.nemdef",
+	"file": "testcase/mulhi3.nemdef",
 	"starting_function": "mulhi3_enter",
 	"timing_sensitive": true,
 	"parameters": [{
 			"size": 1,
-			"confidential": true 
+			"confidential": true
 		}, {
 			"size": 1,
 		    "confidential": true
