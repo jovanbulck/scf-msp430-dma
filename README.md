@@ -63,17 +63,21 @@ To run all (hardened + unhardened) programs:
 $ ./run_all.sh
 ```
 
+### Running the benchmarks from the MicroProfiler paper
+
+The binaries for this test are generated in the Docker container of the [MicroProfiler artifact](https://github.com/martonbognar/microprofiler), and are provided in the `bin` directory for convenience. To run SCF-MSP on these benchmarks, replace the `*.nemdef` binaries in `testcase/` with those in one of the `zip` archives (we also provide an `unzip.sh` script for convenience):
+
 To run the Nemesis-hardened code:
 
 ```bash
-$ ./untar.sh bin/sancus-nemdef.tgz
+$ ./unzip.sh bin/sancus-nemdef.zip
 $ ./run_all_nemdef.sh
 ```
 
 To run the Nemesis+DMA-hardened code:
 
 ```bash
-$ ./untar.sh bin/sancus-dma.tgz
+$ ./unzip.sh bin/sancus-dma.zip
 $ ./run_all_nemdef.sh
 ```
 
